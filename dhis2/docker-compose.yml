@@ -21,8 +21,8 @@ services:
       context: .
       dockerfile: ./dhis2app/Dockerfile
     volumes:
-      - ./data/logs:/dhis2/home/logs
-      - ./data/files:/dhis2/home/files
+      - ./data/home:/dhis2/home
+      - ./dhis.conf:/dhis2/home/dhis.conf
     depends_on: 
       - dhis2mq
       - dhis2db

@@ -3,7 +3,7 @@ EXPOSE 8080
 
 RUN mkdir -p /dhis2/home
 ENV DHIS2_HOME /dhis2/home
-COPY scripts/wait-for-it.sh dhis.conf *.war /dhis2/
+COPY scripts/wait-for-it.sh *.war /dhis2/
 
 RUN apt-get update \ 
     && apt-get install -y curl netcat \
