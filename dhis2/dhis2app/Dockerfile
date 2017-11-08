@@ -19,4 +19,4 @@ RUN if [ ! -f /dhis2/dhis.war ]; \
         curl -L http://stable.dhis2.org -o /dhis2/dhis.war; \
     fi; \
     rm -rf /usr/local/tomcat/webapps/* \
-    && cp /dhis2/dhis.war /usr/local/tomcat/webapps/ROOT.war
+    && unzip /dhis2/dhis.war -d /usr/local/tomcat/webapps/ROOT
