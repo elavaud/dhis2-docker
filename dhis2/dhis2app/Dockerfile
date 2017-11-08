@@ -9,11 +9,6 @@ RUN apt-get update \
     && apt-get install -y curl netcat \
     && rm -rf /var/lib/apt/lists/*
 
-RUN if [ -f /dhis2/dhis.conf ]; \
-    then \
-        cp /dhis2/dhis.conf /dhis2/home/; \
-    fi
-
 RUN if [ ! -f /dhis2/dhis.war ]; \
     then \
         curl -L http://stable.dhis2.org -o /dhis2/dhis.war; \
