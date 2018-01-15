@@ -12,6 +12,7 @@ services:
     build:
       context: .
       dockerfile: ./dhis2db/Dockerfile
+    env_file: .postgres.env
     volumes:
       - ./data/db:/var/lib/postgresql/data
     restart: always
