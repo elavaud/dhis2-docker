@@ -1,4 +1,4 @@
-FROM tomcat:8
+FROM tomcat:8.0-alpine
 EXPOSE 8080
 
 RUN mkdir -p /dhis2/home
