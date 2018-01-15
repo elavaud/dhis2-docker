@@ -2,5 +2,7 @@ data
 *.war
 *.env
 *.swp
-logs
+logs/dhis2/*
+logs/tomcat/*
 !logs/dhis2/.keep
+!logs/tomcat/.keep

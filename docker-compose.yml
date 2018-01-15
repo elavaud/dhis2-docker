@@ -29,6 +29,9 @@ services:
       - type: bind
         source: ./logs/dhis2
         target: /dhis2/home/logs
+      - type: bind
+        source: ./logs/tomcat
+        target: /usr/local/tomcat/logs
     depends_on: 
       - dhis2mq
       - dhis2db
