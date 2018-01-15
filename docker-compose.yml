@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.3'
 
 services: 
   dhis2mq:
@@ -8,19 +8,17 @@ services:
       - 15672:15672
     restart: always
   dhis2db:
-    image: dhis2db:latest
-    build:
-      context: .
-      dockerfile: ./dhis2db/Dockerfile
+    image: mdillon/postgis:10-alpine
     env_file: .postgres.env
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - type: volume
+        source: dhis2_db
+        target: /var/lib/postgresql/data
     restart: always
   dhis2app:
     image: dhis2app:latest
     build:
-      context: .
-      dockerfile: ./dhis2app/Dockerfile
+      context: ./dhis2app
     volumes:
       - ./data/home:/dhis2/home
       - ./dhis.conf:/dhis2/home/dhis.conf
@@ -29,6 +27,9 @@ services:
       - dhis2db
     ports:
       - 8080:8080
-    entrypoint: /dhis2/wait-for-it.sh -t 50000 dhis2mq:5672 -- /dhis2/wait-for-it.sh -t 50000 dhis2db:5432 --
+    entrypoint: /wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 --
     command: catalina.sh run
     restart: always
+
+volumes:
+  dhis2_db:

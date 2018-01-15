@@ -1,9 +1,6 @@
-FROM postgres:10
+FROM postgres:10.1-alpine
 
-ENV POSTGRES_USER dhis
-ENV POSTGRES_PASSWORD dhis
-ENV POSTGRES_DB dhis
-
-RUN apt-get update \
-    && apt-get install -y postgresql-10-postgis-2.4 \
-    && rm -rf /var/lib/apt/lists/*
+RUN rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/* \
+    && apk update \
+    && apk --no-cache add postgresql-10-postgis-2.4
