@@ -20,8 +20,15 @@ services:
     build:
       context: ./dhis2app
     volumes:
-      - ./data/home:/dhis2/home
-      - ./dhis.conf:/dhis2/home/dhis.conf
+      - type: volume
+        source: dhis2_home
+        target: /dhis2/home
+      - type: bind
+        source: ./dhis.conf
+        target: /dhis2/home/dhis.conf
+      - type: bind
+        source: ./logs/dhis2
+        target: /dhis2/home/logs
     depends_on: 
       - dhis2mq
       - dhis2db
@@ -33,3 +40,4 @@ services:
 
 volumes:
   dhis2_db:
+  dhis2_home:

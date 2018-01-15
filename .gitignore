@@ -2,3 +2,5 @@ data
 *.war
 *.env
 *.swp
+logs
+!logs/dhis2/.keep
