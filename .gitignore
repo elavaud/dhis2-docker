@@ -2,6 +2,10 @@ data
 *.war
 *.env
 *.swp
+*.gz.enc
+*.7z
+backups/*
+!backups/.keep
 logs/dhis2/*
 logs/tomcat/*
 !logs/dhis2/.keep

@@ -16,16 +16,12 @@ services:
         target: /var/lib/postgresql/data
     restart: always
   dhis2app:
-    image: dhis2app:latest
     build:
       context: ./dhis2app
     volumes:
       - type: volume
         source: dhis2_home
         target: /dhis2/home
-      - type: bind
-        source: ./dhis.conf
-        target: /dhis2/home/dhis.conf
       - type: bind
         source: ./logs/dhis2
         target: /dhis2/home/logs
@@ -40,7 +36,16 @@ services:
     entrypoint: /wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 --
     command: catalina.sh run
     restart: always
-
+  backups:
+    image: elavaud/backncrypt:1.0
+    restart: always
+    env_file: .backncrypt.env
+    volumes:
+      - type: bind
+        source: ./backups
+        target: /backups
+    command: "./wait-for -t 5000 dhis2db:5432 -- ./set.sh"
+    
 volumes:
   dhis2_db:
   dhis2_home:
