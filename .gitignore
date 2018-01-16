@@ -1,6 +1,9 @@
 data
 *.war
 *.env
+!env_templates/template.bnc.env
+!env_templates/template.postgres.env
+!env_templates/template.dhis2.env
 *.swp
 *.gz.enc
 *.7z

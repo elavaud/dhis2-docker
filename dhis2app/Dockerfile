@@ -6,12 +6,12 @@ RUN rm -rf /var/cache/apk/* \
     && apk update \ 
     && apk --no-cache add curl netcat-openbsd
 
-COPY wait-for dhis.war dhis.conf /
+COPY wait-for dhis.war dhis.conf setconf.sh /
 RUN mkdir -p /dhis2/home \
     && if [ -f "/dhis.war" ]; then \
       mv /dhis.war /dhis2/dhis.war; \
     fi; \
-    chmod u+x /wait-for
+    chmod u+x /wait-for /setconf.sh
 
 ENV DHIS2_HOME /dhis2/home
 
@@ -23,4 +23,4 @@ RUN if [ ! -f /dhis2/dhis.war ]; \
     && mkdir -p /usr/local/tomcat/webapps/ROOT \
     && unzip /dhis2/dhis.war -d /usr/local/tomcat/webapps/ROOT \
     && rm -rf /dhis2/home/dhis.conf \
-    && mv /dhis.conf /dhis2/home/dhis.conf
+    && mv /dhis.conf /dhis2/home/dhis.conf 

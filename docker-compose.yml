@@ -18,6 +18,7 @@ services:
   dhis2app:
     build:
       context: ./dhis2app
+    env_file: .dhis2.env
     volumes:
       - type: volume
         source: dhis2_home
@@ -33,13 +34,12 @@ services:
       - dhis2db
     ports:
       - 8080:8080
-    entrypoint: /wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 --
-    command: catalina.sh run
+    command: [sh, -c, "/wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 -- /setconf.sh && catalina.sh run"]
     restart: always
   backups:
     image: elavaud/backncrypt:1.0
     restart: always
-    env_file: .backncrypt.env
+    env_file: .bnc.env
     volumes:
       - type: bind
         source: ./backups
