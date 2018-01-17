@@ -6,21 +6,16 @@ RUN rm -rf /var/cache/apk/* \
     && apk update \ 
     && apk --no-cache add curl netcat-openbsd
 
-COPY wait-for dhis.war dhis.conf setconf.sh /
-RUN mkdir -p /dhis2/home \
+ADD . /
+RUN rm -rf /usr/local/tomcat/webapps/ROOT \
+    && mkdir -p /opt/dhis2/config \
+    && mv /hibernate.properties /opt/dhis2/config/hibernate.properties \
+    && mv /dhis.conf /opt/dhis2/config/dhis.conf \
     && if [ -f "/dhis.war" ]; then \
-      mv /dhis.war /dhis2/dhis.war; \
+      mv /dhis.war /usr/local/tomcat/webapps/ROOT.war; \
+    else \
+      curl -L http://stable.dhis2.org -o /usr/local/tomcat/webapps/ROOT.war; \
     fi; \
-    chmod u+x /wait-for /setconf.sh
+    chmod u+x /wait-for /setconf.sh \
+    && echo "export JAVA_OPTS=$JAVA_OPTS \n export DHIS2_HOME='/opt/dhis2/config'" >> /usr/local/tomcat/bin/setenv.sh
 
-ENV DHIS2_HOME /dhis2/home
-
-RUN if [ ! -f /dhis2/dhis.war ]; \
-    then \
-        curl -L http://stable.dhis2.org -o /dhis2/dhis.war; \
-    fi; \
-    rm -rf /usr/local/tomcat/webapps/* \
-    && mkdir -p /usr/local/tomcat/webapps/ROOT \
-    && unzip /dhis2/dhis.war -d /usr/local/tomcat/webapps/ROOT \
-    && rm -rf /dhis2/home/dhis.conf \
-    && mv /dhis.conf /dhis2/home/dhis.conf 
