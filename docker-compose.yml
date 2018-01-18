@@ -1,24 +1,37 @@
 version: '3.3'
 
-services: 
+services:
+ 
   dhis2mq:
     image: rabbitmq:3-management-alpine
-    ports:
-      - 5672:5672
-      - 15672:15672
     restart: always
+    expose:
+      - "5672"
+      - "15672"
+    networks:
+      - dhis2-back
+
   dhis2db:
     image: mdillon/postgis:10-alpine
+    restart: always
     env_file: .postgres.env
     volumes:
       - type: volume
         source: dhis2_db
         target: /var/lib/postgresql/data
-    restart: always
+    networks:
+      - dhis2-back
+
   dhis2app:
     build:
       context: ./dhis2app
+    restart: always
     env_file: .dhis2.env
+    expose:
+      - "8080"
+    depends_on:
+      - dhis2mq
+      - dhis2db
     volumes:
       - type: volume
         source: dhis2_home
@@ -29,23 +42,55 @@ services:
       - type: bind
         source: ./logs/tomcat
         target: /usr/local/tomcat/logs
-    depends_on: 
-      - dhis2mq
-      - dhis2db
-    ports:
-      - 8080:8080
+    networks:
+      - dhis2-back
+      - dhis2-front
     command: [sh, -c, "/wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 -- /setconf.sh && catalina.sh run"]
-    restart: always
+
   backups:
     image: elavaud/backncrypt:1.0
     restart: always
     env_file: .bnc.env
+    depends_on:
+      - dhis2db
     volumes:
       - type: bind
         source: ./backups
         target: /backups
+    networks:
+      - dhis2-back
     command: "./wait-for -t 5000 dhis2db:5432 -- ./set.sh"
+
+  nginx:
+    image: nginx:1.13-alpine
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - dhis2app
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true
+      - type: bind
+        source: ./nginx/default.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+      - type: bind
+        source: ./nginx/wait-for
+        target: /wait-for
+        read_only: true
+    networks:
+      - dhis2-front
+    command: [sh, -c, "/wait-for -t 5000 dhis2app:8080 -- nginx -g 'daemon off;'"]
     
 volumes:
   dhis2_db:
   dhis2_home:
+
+networks:
+  dhis2-front:
+    driver: bridge
+  dhis2-back:
+    driver: bridge

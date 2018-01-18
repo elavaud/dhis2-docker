@@ -9,7 +9,6 @@ RUN rm -rf /var/cache/apk/* \
 ADD . /
 RUN rm -rf /usr/local/tomcat/webapps/ROOT \
     && mkdir -p /opt/dhis2/config \
-    && mv /hibernate.properties /opt/dhis2/config/hibernate.properties \
     && mv /dhis.conf /opt/dhis2/config/dhis.conf \
     && if [ -f "/dhis.war" ]; then \
       mv /dhis.war /usr/local/tomcat/webapps/ROOT.war; \
