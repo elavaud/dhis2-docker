@@ -48,7 +48,7 @@ services:
     command: [sh, -c, "/wait-for -t 50000 dhis2mq:5672 -- /wait-for -t 50000 dhis2db:5432 -- /setconf.sh && catalina.sh run"]
 
   backups:
-    image: elavaud/backncrypt:1.0
+    image: elavaud/backncrypt:latest
     restart: always
     env_file: .bnc.env
     depends_on:
